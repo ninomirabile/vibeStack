@@ -1,0 +1,30 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+.envrc
+*.sqlite3
+*.db
+*.log
+.mypy_cache/
+.pytest_cache/
+.vscode/
+.idea/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+/.venv/
+venv/
+.DS_Store
+# Alembic
+migrations/
+# Docker
+postgres_data/
+# Test outputs
+test-results.xml
+# VSCode
+.vscode/ 
