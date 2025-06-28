@@ -192,10 +192,10 @@ build/
 **/ios/Runner/GeneratedPluginRegistrant.*
 
 # Web
-**/web/firebase_options.dart
-**/web/index.html
-**/web/manifest.json
-**/web/icons/
+# **/web/firebase_options.dart
+# **/web/index.html
+# **/web/manifest.json
+# **/web/icons/
 
 # Windows
 **/windows/flutter/generated_plugin_registrant.cc
