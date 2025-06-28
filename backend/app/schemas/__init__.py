@@ -1,20 +1,19 @@
-"""
-Pydantic schemas package.
+"""Pydantic schemas package.
 
 This package contains all Pydantic models for request/response validation
 and serialization in the VibeStack API.
 """
 
-from .user import UserCreate, UserUpdate, UserResponse, UserInDB
-from .auth import Token, TokenData, LoginRequest, RefreshRequest
+from .auth import LoginRequest, RefreshRequest, Token, TokenData
+from .user import UserCreate, UserInDB, UserResponse, UserUpdate
 
 __all__ = [
     "UserCreate",
-    "UserUpdate", 
+    "UserUpdate",
     "UserResponse",
     "UserInDB",
     "Token",
     "TokenData",
     "LoginRequest",
-    "RefreshRequest"
-] 
+    "RefreshRequest",
+]

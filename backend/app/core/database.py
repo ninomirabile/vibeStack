@@ -1,14 +1,13 @@
-"""
-Database configuration and session management.
+"""Database configuration and session management.
 
 This module provides async database session management using SQLAlchemy
 and handles database initialization and connection pooling.
 """
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+import structlog
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.pool import NullPool
-import structlog
 
 from app.core.config import settings
 
@@ -35,10 +34,10 @@ Base = declarative_base()
 
 
 async def get_db() -> AsyncSession:
-    """
-    Dependency to get database session.
-    
-    Yields:
+    """Dependency to get database session.
+
+    Yields
+    ------
         AsyncSession: Database session for the request
     """
     async with AsyncSessionLocal() as session:
@@ -57,13 +56,13 @@ async def init_db():
     try:
         # Import all models to ensure they are registered
         from app.models import user  # noqa: F401
-        
+
         # Create all tables
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        
+
         logger.info("Database tables created successfully")
-        
+
     except Exception as e:
         logger.error("Failed to initialize database", error=str(e))
         raise
@@ -72,4 +71,4 @@ async def init_db():
 async def close_db():
     """Close database connections."""
     await engine.dispose()
-    logger.info("Database connections closed") 
+    logger.info("Database connections closed")

@@ -1,21 +1,21 @@
-"""
-Main FastAPI application entry point.
+"""Main FastAPI application entry point.
 
 This module initializes the FastAPI application with all necessary
 middleware, routers, and configuration for the VibeStack backend.
 """
 
+import time
+from contextlib import asynccontextmanager
+
+import structlog
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-import structlog
-import time
-from contextlib import asynccontextmanager
 
+from app.api.v1.api import api_router
 from app.core.config import settings
 from app.core.database import init_db
-from app.api.v1.api import api_router
 from app.core.logging import setup_logging
 
 # Setup structured logging
@@ -30,16 +30,15 @@ async def lifespan(app: FastAPI):
     logger.info("Starting VibeStack backend application")
     await init_db()
     logger.info("Database initialized successfully")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down VibeStack backend application")
 
 
 def create_application() -> FastAPI:
     """Create and configure the FastAPI application."""
-    
     app = FastAPI(
         title="VibeStack API",
         description="A modular FastAPI backend for VibeStack applications",
@@ -48,7 +47,7 @@ def create_application() -> FastAPI:
         redoc_url="/redoc" if settings.ENVIRONMENT != "production" else None,
         lifespan=lifespan,
     )
-    
+
     # Add CORS middleware
     app.add_middleware(
         CORSMiddleware,
@@ -57,19 +56,16 @@ def create_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
+
     # Add trusted host middleware for production
     if settings.ENVIRONMENT == "production":
-        app.add_middleware(
-            TrustedHostMiddleware,
-            allowed_hosts=settings.ALLOWED_HOSTS
-        )
-    
+        app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.ALLOWED_HOSTS)
+
     # Add request logging middleware
     @app.middleware("http")
     async def log_requests(request: Request, call_next):
         start_time = time.time()
-        
+
         # Log request
         logger.info(
             "Incoming request",
@@ -77,9 +73,9 @@ def create_application() -> FastAPI:
             url=str(request.url),
             client_ip=request.client.host if request.client else None,
         )
-        
+
         response = await call_next(request)
-        
+
         # Log response
         process_time = time.time() - start_time
         logger.info(
@@ -89,9 +85,9 @@ def create_application() -> FastAPI:
             status_code=response.status_code,
             process_time=f"{process_time:.4f}s",
         )
-        
+
         return response
-    
+
     # Add exception handler
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
@@ -102,15 +98,14 @@ def create_application() -> FastAPI:
             error=str(exc),
             exc_info=True,
         )
-        
+
         return JSONResponse(
-            status_code=500,
-            content={"detail": "Internal server error"}
+            status_code=500, content={"detail": "Internal server error"}
         )
-    
+
     # Include API router
     app.include_router(api_router, prefix="/api/v1")
-    
+
     # Health check endpoint
     @app.get("/health")
     async def health_check():
@@ -118,9 +113,9 @@ def create_application() -> FastAPI:
         return {
             "status": "healthy",
             "version": "1.0.0",
-            "environment": settings.ENVIRONMENT
+            "environment": settings.ENVIRONMENT,
         }
-    
+
     # Root endpoint
     @app.get("/")
     async def root():
@@ -129,9 +124,9 @@ def create_application() -> FastAPI:
             "message": "Welcome to VibeStack API",
             "version": "1.0.0",
             "docs": "/docs" if settings.ENVIRONMENT != "production" else None,
-            "health": "/health"
+            "health": "/health",
         }
-    
+
     return app
 
 
@@ -140,9 +135,10 @@ app = create_application()
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
         port=8000,
-        reload=settings.ENVIRONMENT == "development"
-    ) 
+        reload=settings.ENVIRONMENT == "development",
+    )

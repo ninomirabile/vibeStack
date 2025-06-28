@@ -5,7 +5,7 @@ target-version = ['py311']
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "W", "C90", "I", "N", "D", "UP", "B", "A", "C4", "T20", "Q"]
-ignore = ["E501"]
+ignore = ["E501", "B008", "N805"]
 exclude = [".venv", "__pycache__", "migrations"]
 
 [tool.pytest.ini_options]
