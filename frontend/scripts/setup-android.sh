@@ -7,6 +7,15 @@ set -e
 
 echo "Setting up Android build environment..."
 
+# Check Java version
+JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
+if [ "$JAVA_VERSION" -lt 17 ]; then
+    echo "Error: Java 17 or higher is required for Android builds. Current version: $JAVA_VERSION"
+    echo "Please install Java 17 or set JAVA_HOME to point to Java 17 installation."
+    exit 1
+fi
+echo "Java version check passed: $(java -version 2>&1 | head -n 1)"
+
 # Get Flutter SDK path
 FLUTTER_SDK=$(flutter --version --machine | grep -o '"flutterRoot":"[^"]*"' | cut -d'"' -f4)
 

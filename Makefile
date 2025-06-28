@@ -26,13 +26,13 @@ help:
 	@echo ""
 	@echo "Frontend commands:"
 	@echo "  frontend-install - Install Flutter dependencies"
-	@echo "  frontend-setup-android - Set up Android build environment"
+	@echo "  frontend-setup-android - Set up Android build environment (requires Java 17)"
 	@echo "  frontend-start   - Start Flutter development server"
 	@echo "  frontend-test    - Run Flutter tests"
 	@echo "  frontend-lint    - Run Flutter linting"
 	@echo "  frontend-build   - Build Flutter for all platforms"
 	@echo "  frontend-build-web - Build Flutter for web"
-	@echo "  frontend-build-android - Build Flutter for Android"
+	@echo "  frontend-build-android - Build Flutter for Android (requires Java 17)"
 
 # Install all dependencies
 install: backend-install frontend-install
