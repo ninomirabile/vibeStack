@@ -26,10 +26,13 @@ help:
 	@echo ""
 	@echo "Frontend commands:"
 	@echo "  frontend-install - Install Flutter dependencies"
+	@echo "  frontend-setup-android - Set up Android build environment"
 	@echo "  frontend-start   - Start Flutter development server"
 	@echo "  frontend-test    - Run Flutter tests"
 	@echo "  frontend-lint    - Run Flutter linting"
 	@echo "  frontend-build   - Build Flutter for all platforms"
+	@echo "  frontend-build-web - Build Flutter for web"
+	@echo "  frontend-build-android - Build Flutter for Android"
 
 # Install all dependencies
 install: backend-install frontend-install
@@ -101,6 +104,10 @@ frontend-install:
 	@echo "Installing frontend dependencies..."
 	cd frontend && flutter pub get
 
+frontend-setup-android:
+	@echo "Setting up Android build environment..."
+	cd frontend && ./scripts/setup-android.sh
+
 frontend-start:
 	@echo "Starting Flutter development server..."
 	cd frontend && flutter run -d chrome --web-port 3000
@@ -118,6 +125,16 @@ frontend-build:
 	cd frontend && flutter build web
 	cd frontend && flutter build apk --release
 	@echo "Builds completed!"
+
+frontend-build-web:
+	@echo "Building Flutter for web..."
+	cd frontend && flutter build web
+	@echo "Web build completed!"
+
+frontend-build-android:
+	@echo "Building Flutter for Android..."
+	cd frontend && flutter build apk --release
+	@echo "Android build completed!"
 
 # Development helpers
 dev-backend:
@@ -158,6 +175,7 @@ ci-frontend:
 	cd frontend && flutter pub get
 	cd frontend && flutter analyze
 	cd frontend && flutter test
+	cd frontend && ./scripts/setup-android.sh
 
 # Production helpers
 prod-build:

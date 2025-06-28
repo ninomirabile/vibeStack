@@ -26,8 +26,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = project.property("flutterVersionCode").toString().toInt()
-        versionName = project.property("flutterVersionName").toString()
+        versionCode = (project.findProperty("flutterVersionCode") as String?)?.toIntOrNull() ?: 1
+        versionName = project.findProperty("flutterVersionName") as String? ?: "1.0.0"
     }
 
     buildTypes {
