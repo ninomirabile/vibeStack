@@ -14,9 +14,12 @@ async def test_password_verification():
     password = "TestPassword123!"
 
     # Test password verification with incorrect hash
-    assert verify_password(
-        password, "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/HS.i8i2"
-    ) is False
+    assert (
+        verify_password(
+            password, "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/HS.i8i2"
+        )
+        is False
+    )
 
     # Test with correct hash
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

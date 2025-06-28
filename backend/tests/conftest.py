@@ -16,16 +16,14 @@ from app.services.user_service import UserService
 # Check if we're running integration tests
 is_integration_test = os.getenv("INTEGRATION_TEST", "false").lower() == "true"
 
+# Select database URL based on test mode
 if is_integration_test:
-    # Integration tests: use PostgreSQL
     database_url = os.getenv(
-        "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/test_db"
+        "DATABASE_URL",
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/test_db",
     )
-    print(f"🔧 Integration test mode - Using database: {database_url}")
 else:
-    # Unit tests: use SQLite in memory
     database_url = "sqlite+aiosqlite:///:memory:"
-    print("🧪 Unit test mode - Using SQLite in memory")
 
 # Set testing environment
 os.environ["TESTING"] = "true"
@@ -57,14 +55,8 @@ def event_loop():
 @pytest.fixture(autouse=True)
 async def setup_database():
     """Set up test database with tables and create admin user."""
-    if is_integration_test:
-        # For integration tests, create tables but don't drop them
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-    else:
-        # For unit tests, create and drop tables for each test
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
     # Create admin user
     async with TestingSessionLocal() as session:
@@ -86,7 +78,7 @@ async def setup_database():
     yield
 
     if not is_integration_test:
-        # Only drop tables for unit tests
+        # Drop tables after unit tests
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
 
