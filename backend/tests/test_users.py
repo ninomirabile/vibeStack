@@ -5,6 +5,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
+@pytest.mark.integration
 async def test_user_profile_and_update(async_client: AsyncClient):
     """Test user profile retrieval and update functionality."""
     # Register and login
@@ -39,6 +40,7 @@ async def test_user_profile_and_update(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
+@pytest.mark.integration
 async def test_admin_list_and_delete(async_client: AsyncClient):
     """Test admin user listing and deletion functionality."""
     # Login as admin

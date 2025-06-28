@@ -5,6 +5,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
+@pytest.mark.integration
 async def test_register_and_login(async_client: AsyncClient):
     """Test user registration, login, and token refresh flow."""
     # Register a new user

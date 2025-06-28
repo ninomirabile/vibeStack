@@ -13,14 +13,26 @@ from app.main import app
 from app.schemas.user import UserCreate
 from app.services.user_service import UserService
 
+# Check if we're running integration tests
+is_integration_test = os.getenv("INTEGRATION_TEST", "false").lower() == "true"
+
+if is_integration_test:
+    # Integration tests: use PostgreSQL
+    database_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/test_db")
+    print(f"🔧 Integration test mode - Using database: {database_url}")
+else:
+    # Unit tests: use SQLite in memory
+    database_url = "sqlite+aiosqlite:///:memory:"
+    print(f"🧪 Unit test mode - Using SQLite in memory")
+
 # Set testing environment
 os.environ["TESTING"] = "true"
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
+os.environ["DATABASE_URL"] = database_url
 os.environ["SECRET_KEY"] = "test-secret-key"
 
 # Create test database engine
 test_engine = create_async_engine(
-    "sqlite+aiosqlite:///:memory:",
+    database_url,
     echo=False,
 )
 
@@ -43,8 +55,15 @@ def event_loop():
 @pytest.fixture(autouse=True)
 async def setup_database():
     """Set up test database with tables and create admin user."""
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    if is_integration_test:
+        # For integration tests, create tables but don't drop them
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    else:
+        # For unit tests, create and drop tables for each test
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    
     # Create admin user
     async with TestingSessionLocal() as session:
         user_service = UserService(session)
@@ -61,9 +80,13 @@ async def setup_database():
             )
         except Exception:
             pass
+    
     yield
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+    
+    if not is_integration_test:
+        # Only drop tables for unit tests
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest.fixture

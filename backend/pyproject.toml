@@ -10,4 +10,13 @@ exclude = [".venv", "__pycache__", "migrations"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-addopts = "--maxfail=1 --disable-warnings" 
+addopts = "--maxfail=1 --disable-warnings"
+markers = [
+    "integration: marks tests as integration tests (deselect with '-m \"not integration\"')",
+    "unit: marks tests as unit tests",
+    "slow: marks tests as slow running",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"] 

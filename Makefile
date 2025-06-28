@@ -21,6 +21,9 @@ help:
 	@echo "  backend-install  - Install Python dependencies"
 	@echo "  backend-start    - Start backend services"
 	@echo "  backend-test     - Run backend tests"
+	@echo "  backend-test-unit - Run backend unit tests only"
+	@echo "  backend-test-integration - Run backend integration tests only"
+	@echo "  backend-test-all - Run all backend tests"
 	@echo "  backend-lint     - Run backend linting"
 	@echo "  backend-seed     - Seed backend database"
 	@echo ""
@@ -71,7 +74,7 @@ docs:
 # Backend commands
 backend-install:
 	@echo "Installing backend dependencies..."
-	cd backend && pip install -r requirements.txt
+	cd backend && pip3 install -r requirements.txt
 
 backend-start:
 	@echo "Starting backend services..."
@@ -82,7 +85,19 @@ backend-start:
 
 backend-test:
 	@echo "Running backend tests..."
-	cd backend && python -m pytest tests/ -v
+	cd backend && python3 -m pytest tests/ -v
+
+backend-test-unit:
+	@echo "Running backend unit tests..."
+	cd backend && python3 -m pytest tests/ -v -m "unit"
+
+backend-test-integration:
+	@echo "Running backend integration tests..."
+	cd backend && python3 -m pytest tests/ -v --integration -p pytest_integration
+
+backend-test-all:
+	@echo "Running all backend tests..."
+	cd backend && python3 -m pytest tests/ -v
 
 backend-lint:
 	@echo "Running backend linting..."
@@ -90,7 +105,7 @@ backend-lint:
 
 backend-seed:
 	@echo "Seeding backend database..."
-	cd backend && python scripts/seed_data.py
+	cd backend && python3 scripts/seed_data.py
 
 backend-clean:
 	@echo "Cleaning backend artifacts..."
