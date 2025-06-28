@@ -1,7 +1,7 @@
 """Custom pytest configuration for integration tests."""
 
-import os
 import logging
+import os
 
 import pytest
 
