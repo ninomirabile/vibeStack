@@ -18,12 +18,14 @@ is_integration_test = os.getenv("INTEGRATION_TEST", "false").lower() == "true"
 
 if is_integration_test:
     # Integration tests: use PostgreSQL
-    database_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/test_db")
+    database_url = os.getenv(
+        "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/test_db"
+    )
     print(f"🔧 Integration test mode - Using database: {database_url}")
 else:
     # Unit tests: use SQLite in memory
     database_url = "sqlite+aiosqlite:///:memory:"
-    print(f"🧪 Unit test mode - Using SQLite in memory")
+    print("🧪 Unit test mode - Using SQLite in memory")
 
 # Set testing environment
 os.environ["TESTING"] = "true"
@@ -63,7 +65,7 @@ async def setup_database():
         # For unit tests, create and drop tables for each test
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-    
+
     # Create admin user
     async with TestingSessionLocal() as session:
         user_service = UserService(session)
@@ -80,9 +82,9 @@ async def setup_database():
             )
         except Exception:
             pass
-    
+
     yield
-    
+
     if not is_integration_test:
         # Only drop tables for unit tests
         async with test_engine.begin() as conn:
